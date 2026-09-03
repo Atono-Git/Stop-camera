@@ -2,7 +2,6 @@
 <html lang="ja">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -12,17 +11,14 @@
 
   <title>カメラ一時停止</title>
 
-
   <style>
 
     * {
       box-sizing: border-box;
     }
 
-
     html,
     body {
-
       margin: 0;
       padding: 0;
 
@@ -41,9 +37,7 @@
       overflow: hidden;
     }
 
-
     #app {
-
       width: 100%;
       height: 100%;
 
@@ -53,13 +47,11 @@
       background: #000;
     }
 
-
-    /* =================================
-       カメラエリア
-       ================================= */
+    /* =========================
+       カメラ表示
+       ========================= */
 
     #cameraArea {
-
       position: relative;
 
       flex: 1;
@@ -74,9 +66,7 @@
       justify-content: center;
     }
 
-
     #camera {
-
       display: none;
 
       width: 100%;
@@ -86,10 +76,8 @@
 
       background: #000;
     }
-
 
     #frozenImage {
-
       display: none;
 
       width: 100%;
@@ -100,13 +88,11 @@
       background: #000;
     }
 
-
-    /* =================================
+    /* =========================
        ステータス
-       ================================= */
+       ========================= */
 
     #status {
-
       position: absolute;
 
       top: 15px;
@@ -118,8 +104,7 @@
 
       border-radius: 999px;
 
-      background:
-        rgba(0, 0, 0, 0.72);
+      background: rgba(0, 0, 0, 0.72);
 
       font-size: 14px;
 
@@ -128,13 +113,11 @@
       white-space: nowrap;
     }
 
-
-    /* =================================
+    /* =========================
        カメラOFF
-       ================================= */
+       ========================= */
 
     #cameraOffButton {
-
       display: none;
 
       position: absolute;
@@ -148,8 +131,7 @@
 
       border-radius: 12px;
 
-      background:
-        rgba(25, 25, 25, 0.9);
+      background: rgba(25, 25, 25, 0.9);
 
       color: #fff;
 
@@ -161,39 +143,32 @@
       cursor: pointer;
     }
 
-
-    /* =================================
-       縦型ズームパネル
-       ================================= */
+    /* =========================
+       縦ズーム
+       ========================= */
 
     #zoomPanel {
-
       display: none;
 
       position: absolute;
 
       left: 12px;
-
       top: 50%;
 
       transform: translateY(-50%);
 
-      width: 64px;
-
+      width: 66px;
       min-height: 310px;
 
       padding: 12px 8px;
 
       border-radius: 18px;
 
-      background:
-        rgba(15, 15, 15, 0.86);
+      background: rgba(15, 15, 15, 0.86);
 
       backdrop-filter: blur(10px);
 
       z-index: 40;
-
-      display: none;
 
       flex-direction: column;
 
@@ -204,41 +179,28 @@
       gap: 8px;
     }
 
-
     #zoomTitle {
-
       font-size: 12px;
-
       color: #ccc;
-
       white-space: nowrap;
     }
 
-
     #zoomValue {
-
       font-size: 19px;
-
       font-weight: 700;
-
       white-space: nowrap;
-
       margin-bottom: 5px;
     }
 
-
     /*
-     * 縦方向スライダー
+     * 縦型スライダー
      */
 
     #zoomSlider {
-
       appearance: slider-vertical;
-
       -webkit-appearance: slider-vertical;
 
       width: 32px;
-
       height: 190px;
 
       margin: 0;
@@ -248,41 +210,29 @@
       cursor: pointer;
     }
 
-
     /*
-     * Safariなどで
-     * vertical sliderが使えない場合の保険
+     * 縦スライダー非対応ブラウザ用
      */
 
-    @supports not (
-      appearance: slider-vertical
-    ) {
+    @supports not (appearance: slider-vertical) {
 
       #zoomSlider {
-
-        transform:
-          rotate(-90deg);
+        transform: rotate(-90deg);
 
         width: 190px;
-
         height: 32px;
 
-        margin:
-          80px 0;
+        margin: 80px 0;
       }
 
     }
 
-
     #zoomLabels {
-
       display: flex;
 
       flex-direction: column;
 
       align-items: center;
-
-      justify-content: space-between;
 
       gap: 5px;
 
@@ -291,19 +241,16 @@
       font-size: 10px;
     }
 
-
-    /* =================================
-       ズーム非対応表示
-       ================================= */
+    /* =========================
+       ズーム非対応
+       ========================= */
 
     #zoomUnsupported {
-
       display: none;
 
       position: absolute;
 
-      left: 90px;
-
+      left: 88px;
       top: 50%;
 
       transform: translateY(-50%);
@@ -314,8 +261,7 @@
 
       border-radius: 10px;
 
-      background:
-        rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.8);
 
       color: #ddd;
 
@@ -326,13 +272,11 @@
       z-index: 45;
     }
 
-
-    /* =================================
+    /* =========================
        エラー
-       ================================= */
+       ========================= */
 
     #error {
-
       display: none;
 
       position: absolute;
@@ -361,19 +305,16 @@
       z-index: 100;
     }
 
-
-    /* =================================
-       下部操作
-       ================================= */
+    /* =========================
+       下部ボタン
+       ========================= */
 
     #controls {
-
       flex-shrink: 0;
 
       display: flex;
 
       justify-content: center;
-
       align-items: center;
 
       gap: 10px;
@@ -386,9 +327,7 @@
       background: #111;
     }
 
-
     button {
-
       min-height: 52px;
 
       padding: 10px 18px;
@@ -410,23 +349,17 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-
     button:active {
-
       transform: scale(0.97);
     }
 
-
     #startButton {
-
       background: #16a34a;
 
       min-width: 200px;
     }
 
-
     #pauseButton {
-
       display: none;
 
       background: #2563eb;
@@ -435,10 +368,8 @@
 
       max-width: 240px;
     }
-
 
     #resumeButton {
-
       display: none;
 
       background: #2563eb;
@@ -448,9 +379,7 @@
       max-width: 240px;
     }
 
-
     #cameraOffBottomButton {
-
       display: none;
 
       background: #333;
@@ -460,13 +389,11 @@
       max-width: 180px;
     }
 
-
-    /* =================================
-       下部説明
-       ================================= */
+    /* =========================
+       説明
+       ========================= */
 
     #info {
-
       flex-shrink: 0;
 
       display: flex;
@@ -486,21 +413,17 @@
       font-size: 12px;
     }
 
-
     #info span {
-
       white-space: nowrap;
     }
 
-
-    /* =================================
+    /* =========================
        スマホ
-       ================================= */
+       ========================= */
 
     @media (max-width: 600px) {
 
       #zoomPanel {
-
         left: 8px;
 
         width: 58px;
@@ -508,15 +431,11 @@
         min-height: 290px;
       }
 
-
       #zoomSlider {
-
         height: 175px;
       }
 
-
       #cameraOffButton {
-
         top: 12px;
         right: 12px;
 
@@ -525,27 +444,21 @@
         padding: 10px 13px;
       }
 
-
       #controls {
-
         gap: 7px;
 
         padding-left: 8px;
         padding-right: 8px;
       }
 
-
       button {
-
         font-size: 14px;
 
         padding-left: 10px;
         padding-right: 10px;
       }
 
-
       #info {
-
         font-size: 10px;
 
         padding-left: 10px;
@@ -555,22 +468,18 @@
     }
 
   </style>
-
 </head>
 
 
 <body>
 
-
 <div id="app">
 
-
-  <!-- =================================
-       カメラ表示
-       ================================= -->
+  <!-- =========================
+       カメラ
+       ========================= -->
 
   <div id="cameraArea">
-
 
     <video
       id="camera"
@@ -579,16 +488,13 @@
       muted
     ></video>
 
-
     <canvas
       id="frozenImage"
     ></canvas>
 
-
     <div id="status">
       カメラを開始してください
     </div>
-
 
     <button
       id="cameraOffButton"
@@ -597,10 +503,9 @@
       ⛔ カメラを切る
     </button>
 
-
-    <!-- =================================
-         縦ズーム
-         ================================= -->
+    <!-- =========================
+         ズーム
+         ========================= -->
 
     <div id="zoomPanel">
 
@@ -608,11 +513,9 @@
         🔍 ズーム
       </div>
 
-
       <div id="zoomValue">
         1.0x
       </div>
-
 
       <input
         id="zoomSlider"
@@ -624,41 +527,30 @@
         aria-label="カメラズーム"
       >
 
-
       <div id="zoomLabels">
-
         <span>5x</span>
-
         <span>4x</span>
-
         <span>3x</span>
-
         <span>2x</span>
-
         <span>1x</span>
-
       </div>
 
     </div>
 
-
     <div id="zoomUnsupported">
-      この端末・ブラウザではカメラのズーム機能を利用できません。
+      この端末・ブラウザではカメラ側のズーム機能を利用できません。
     </div>
 
-
     <div id="error"></div>
-
 
   </div>
 
 
-  <!-- =================================
-       操作ボタン
-       ================================= -->
+  <!-- =========================
+       操作
+       ========================= -->
 
   <div id="controls">
-
 
     <button
       id="startButton"
@@ -667,14 +559,12 @@
       📷 カメラ開始
     </button>
 
-
     <button
       id="cameraOffBottomButton"
       type="button"
     >
       ⛔ カメラを切る
     </button>
-
 
     <button
       id="pauseButton"
@@ -683,7 +573,6 @@
       ⏸ 一時停止
     </button>
 
-
     <button
       id="resumeButton"
       type="button"
@@ -691,13 +580,12 @@
       ▶ 再開
     </button>
 
-
   </div>
 
 
-  <!-- =================================
+  <!-- =========================
        説明
-       ================================= -->
+       ========================= -->
 
   <div id="info">
 
@@ -711,12 +599,10 @@
 
   </div>
 
-
 </div>
 
 
 <script>
-
 
   /* =================================
      要素
@@ -782,6 +668,8 @@
 
   let zoomMaximum = 1;
 
+  let currentZoom = 1;
+
 
   /* =================================
      エラー
@@ -805,7 +693,200 @@
 
 
   /* =================================
-     ズーム性能を調べる
+     カメラのフォーカスを設定
+     ================================= */
+
+  async function applyAutoFocus() {
+
+    if (!videoTrack) {
+      return;
+    }
+
+
+    try {
+
+      const capabilities =
+        videoTrack.getCapabilities();
+
+
+      /*
+       * continuous AFが利用可能なら
+       * 常時オートフォーカスを指定
+       */
+
+      if (
+        capabilities.focusMode &&
+        Array.isArray(
+          capabilities.focusMode
+        )
+      ) {
+
+        if (
+          capabilities.focusMode.includes(
+            "continuous"
+          )
+        ) {
+
+          await videoTrack.applyConstraints({
+
+            advanced: [
+              {
+                focusMode:
+                  "continuous"
+              }
+            ]
+
+          });
+
+          console.log(
+            "Continuous AF enabled"
+          );
+
+          return;
+        }
+
+
+        /*
+         * continuousがなければ
+         * autoを試す
+         */
+
+        if (
+          capabilities.focusMode.includes(
+            "auto"
+          )
+        ) {
+
+          await videoTrack.applyConstraints({
+
+            advanced: [
+              {
+                focusMode: "auto"
+              }
+            ]
+
+          });
+
+          console.log(
+            "Auto focus enabled"
+          );
+
+        }
+
+      }
+
+    }
+    catch (err) {
+
+      console.log(
+        "オートフォーカス設定を適用できませんでした:",
+        err
+      );
+
+    }
+
+  }
+
+
+  /* =================================
+     高解像度設定を確認
+     ================================= */
+
+  async function optimizeCamera() {
+
+    if (!videoTrack) {
+      return;
+    }
+
+
+    try {
+
+      const capabilities =
+        videoTrack.getCapabilities();
+
+
+      const advanced = [];
+
+
+      /*
+       * 高解像度を使用できる場合
+       */
+
+      if (
+        capabilities.width &&
+        capabilities.height
+      ) {
+
+        const maxWidth =
+          capabilities.width.max;
+
+        const maxHeight =
+          capabilities.height.max;
+
+
+        if (
+          Number.isFinite(maxWidth) &&
+          Number.isFinite(maxHeight)
+        ) {
+
+          advanced.push({
+
+            width: maxWidth,
+            height: maxHeight
+
+          });
+
+        }
+
+      }
+
+
+      /*
+       * 可能なら連続AF
+       */
+
+      if (
+        capabilities.focusMode &&
+        capabilities.focusMode.includes(
+          "continuous"
+        )
+      ) {
+
+        advanced.push({
+
+          focusMode:
+            "continuous"
+
+        });
+
+      }
+
+
+      if (advanced.length > 0) {
+
+        await videoTrack.applyConstraints({
+
+          advanced: advanced
+
+        });
+
+      }
+
+    }
+    catch (err) {
+
+      console.log(
+        "カメラ最適化設定を適用できませんでした:",
+        err
+      );
+
+    }
+
+  }
+
+
+  /* =================================
+     ズーム対応確認
      ================================= */
 
   function detectZoom() {
@@ -828,10 +909,6 @@
         videoTrack.getCapabilities();
 
 
-      /*
-       * カメラ側のズームAPI
-       */
-
       if (
         capabilities.zoom &&
         typeof capabilities.zoom.min ===
@@ -841,23 +918,21 @@
       ) {
 
         zoomMinimum =
-          capabilities.zoom.min;
-
-        zoomMaximum =
-          Math.min(
-            capabilities.zoom.max,
-            5
+          Math.max(
+            1,
+            capabilities.zoom.min
           );
 
 
-        /*
-         * 1倍以上、5倍以下で
-         * 実際に使える範囲があるか確認
-         */
+        zoomMaximum =
+          Math.min(
+            5,
+            capabilities.zoom.max
+          );
+
 
         if (
-          zoomMaximum >
-            zoomMinimum
+          zoomMaximum >= zoomMinimum
         ) {
 
           zoomSupported = true;
@@ -870,7 +945,7 @@
     catch (err) {
 
       console.log(
-        "ズーム情報を取得できませんでした",
+        "ズーム情報取得失敗:",
         err
       );
 
@@ -887,34 +962,16 @@
 
 
       zoomSlider.min =
-        String(
-          Math.max(
-            1,
-            zoomMinimum
-          )
-        );
-
+        String(zoomMinimum);
 
       zoomSlider.max =
-        String(
-          Math.min(
-            5,
-            zoomMaximum
-          )
-        );
+        String(zoomMaximum);
 
-
-      /*
-       * 1倍スタート
-       */
+      currentZoom =
+        zoomMinimum;
 
       zoomSlider.value =
-        String(
-          Math.max(
-            1,
-            zoomMinimum
-          )
-        );
+        String(currentZoom);
 
 
       updateZoomText();
@@ -934,7 +991,7 @@
 
 
   /* =================================
-     ズーム倍率表示
+     ズーム表示
      ================================= */
 
   function updateZoomText() {
@@ -952,6 +1009,10 @@
     }
 
 
+    currentZoom =
+      value;
+
+
     zoomValue.textContent =
       value.toFixed(1) + "x";
 
@@ -959,7 +1020,7 @@
 
 
   /* =================================
-     カメラ側のズームを変更
+     カメラ側ズーム
      ================================= */
 
   async function changeZoom(value) {
@@ -968,7 +1029,9 @@
       !videoTrack ||
       !zoomSupported
     ) {
+
       return;
+
     }
 
 
@@ -996,6 +1059,10 @@
       );
 
 
+    currentZoom =
+      zoom;
+
+
     zoomSlider.value =
       String(zoom);
 
@@ -1006,19 +1073,28 @@
     try {
 
       /*
-       * ここでカメラ本体に
-       * ズーム倍率を指定する。
+       * カメラ本体のズームを変更
        */
 
       await videoTrack.applyConstraints({
 
         advanced: [
+
           {
             zoom: zoom
           }
+
         ]
 
       });
+
+
+      /*
+       * ズーム変更後に
+       * オートフォーカスを再確認
+       */
+
+      await applyAutoFocus();
 
     }
     catch (err) {
@@ -1068,17 +1144,18 @@
       );
 
       return;
+
     }
 
 
     try {
 
       /*
-       * videoだけ取得。
+       * カメラだけ取得。
        *
        * audio:false
        *
-       * マイクは使用しない。
+       * マイクにはアクセスしない。
        */
 
       stream =
@@ -1091,15 +1168,16 @@
             },
 
             width: {
-              ideal: 1920
+              ideal: 3840
             },
 
             height: {
-              ideal: 1080
+              ideal: 2160
             },
 
             frameRate: {
-              ideal: 30
+              ideal: 30,
+              min: 15
             }
 
           },
@@ -1121,51 +1199,19 @@
 
 
       /*
-       * カメラのズーム性能を確認
+       * カメラ性能を確認
        */
 
       detectZoom();
 
 
       /*
-       * 連続オートフォーカスを
-       * カメラが対応していれば使用
+       * 高解像度 + AF
        */
 
-      try {
+      await optimizeCamera();
 
-        const capabilities =
-          videoTrack.getCapabilities();
-
-
-        if (
-          capabilities.focusMode &&
-          capabilities.focusMode.includes(
-            "continuous"
-          )
-        ) {
-
-          await videoTrack.applyConstraints({
-
-            advanced: [
-              {
-                focusMode:
-                  "continuous"
-              }
-            ]
-
-          });
-
-        }
-
-      }
-      catch (err) {
-
-        console.log(
-          "オートフォーカス設定非対応"
-        );
-
-      }
+      await applyAutoFocus();
 
 
       /* =========================
@@ -1177,6 +1223,7 @@
 
       frozenImage.style.display =
         "none";
+
 
       startButton.style.display =
         "none";
@@ -1206,9 +1253,25 @@
       console.error(err);
 
 
+      if (stream) {
+
+        stream
+          .getTracks()
+          .forEach(
+            track => track.stop()
+          );
+
+      }
+
+
+      stream = null;
+
+      videoTrack = null;
+
+
       showError(
         "カメラを使用できませんでした。\n\n" +
-        "Safariなどのブラウザでカメラの許可を確認してください。"
+        "Safariのカメラ許可を確認してください。"
       );
 
     }
@@ -1251,7 +1314,10 @@
 
 
     /*
-     * 現在の映像をCanvasへコピー
+     * 現在の映像をCanvasに保存
+     *
+     * これはファイル保存ではなく、
+     * メモリ上に一時表示するだけ。
      */
 
     frozenImage.width =
@@ -1266,16 +1332,19 @@
 
 
     ctx.drawImage(
+
       camera,
+
       0,
       0,
       width,
       height
+
     );
 
 
     /*
-     * カメラ映像停止
+     * 映像を停止
      */
 
     videoTrack.enabled =
@@ -1309,7 +1378,7 @@
      再開
      ================================= */
 
-  function resumeCamera() {
+  async function resumeCamera() {
 
     if (
       !stream ||
@@ -1326,11 +1395,33 @@
       true;
 
 
+    camera.style.display =
+      "block";
+
     frozenImage.style.display =
       "none";
 
-    camera.style.display =
-      "block";
+
+    /*
+     * 再開時にAFを再設定
+     */
+
+    await applyAutoFocus();
+
+
+    /*
+     * 現在のズームも再設定
+     */
+
+    if (
+      zoomSupported
+    ) {
+
+      await changeZoom(
+        currentZoom
+      );
+
+    }
 
 
     status.textContent =
@@ -1375,6 +1466,8 @@
     videoTrack = null;
 
     isPaused = false;
+
+    zoomSupported = false;
 
 
     camera.srcObject =
@@ -1484,9 +1577,7 @@
     }
   );
 
-
 </script>
-
 
 </body>
 </html>
