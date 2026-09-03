@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <title>カメラ一時停止</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+
+    #app {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+    }
+
+    #cameraArea {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+      overflow: hidden;
+    }
+
+    #camera {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    #frozenImage {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    #status {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.65);
+      font-size: 14px;
+      z-index: 10;
+    }
+
+    #controls {
+      flex-shrink: 0;
+      padding: 16px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      background: #111;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 15px 24px;
+      min-width: 150px;
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      background: #2563eb;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    #startButton {
+      background: #16a34a;
+    }
+
+    #pauseButton {
+      display: none;
+    }
+
+    #resumeButton {
+      display: none;
+    }
+
+    #error {
+      display: none;
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 20px;
+      border-radius: 14px;
+      background: #222;
+      text-align: center;
+      line-height: 1.6;
+      z-index: 20;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <div id="cameraArea">
+
+    <!-- リアルタイムカメラ -->
+    <video
+      id="camera"
+      autoplay
+      playsinline
+      muted
+    ></video>
+
+    <!-- 一時停止した映像 -->
+    <canvas id="frozenImage"></canvas>
+
+    <div id="status">カメラを開始してください</div>
+
+    <div id="error"></div>
+
+  </div>
+
+  <div id="controls">
+
+    <button id="startButton">
+      📷 カメラ開始
+    </button>
+
+    <button id="pauseButton">
+      ⏸ 一時停止
+    </button>
+
+    <button id="resumeButton">
+      ▶ 再開
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+  const camera = document.getElementById("camera");
+  const frozenImage = document.getElementById("frozenImage");
+
+  const status = document.getElementById("status");
+  const error = document.getElementById("error");
+
+  const startButton = document.getElementById("startButton");
+  const pauseButton = document.getElementById("pauseButton");
+  const resumeButton = document.getElementById("resumeButton");
+
+  let stream = null;
+  let isPaused = false;
+
+
+  // =========================
+  // カメラ開始
+  // =========================
+
+  async function startCamera() {
+
+    try {
+
+      error.style.display = "none";
+
+      /*
+       * video: true
+       * audio: false
+       *
+       * これでカメラだけ取得。
+       * マイクにはアクセスしない。
+       */
+
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: {
+            ideal: "environment"
+          }
+        },
+        audio: false
+      });
+
+      camera.srcObject = stream;
+
+      await camera.play();
+
+      status.textContent = "カメラ映像";
+
+      startButton.style.display = "none";
+      pauseButton.style.display = "block";
+      resumeButton.style.display = "none";
+
+      isPaused = false;
+
+    } catch (err) {
+
+      console.error(err);
+
+      status.textContent = "カメラを使用できません";
+
+      error.textContent =
+        "カメラを使用できませんでした。\\n\\n" +
+        "ブラウザのカメラ許可を確認してください。";
+
+      error.style.display = "block";
+    }
+  }
+
+
+  // =========================
+  // 一時停止
+  // =========================
+
+  function pauseCamera() {
+
+    if (!stream || isPaused) {
+      return;
+    }
+
+    /*
+     * 現在のカメラ映像をCanvasへコピー。
+     * これによって画面にその瞬間の映像を固定する。
+     */
+
+    const width = camera.videoWidth;
+    const height = camera.videoHeight;
+
+    if (width === 0 || height === 0) {
+      return;
+    }
+
+    frozenImage.width = width;
+    frozenImage.height = height;
+
+    const ctx = frozenImage.getContext("2d");
+
+    ctx.drawImage(
+      camera,
+      0,
+      0,
+      width,
+      height
+    );
+
+    /*
+     * カメラ映像を停止。
+     *
+     * マイクは最初から取得していないので、
+     * 音声処理は存在しない。
+     */
+
+    stream.getVideoTracks().forEach(track => {
+      track.enabled = false;
+    });
+
+    camera.style.display = "none";
+    frozenImage.style.display = "block";
+
+    status.textContent = "⏸ 一時停止中";
+
+    pauseButton.style.display = "none";
+    resumeButton.style.display = "block";
+
+    isPaused = true;
+  }
+
+
+  // =========================
+  // 再開
+  // =========================
+
+  function resumeCamera() {
+
+    if (!stream || !isPaused) {
+      return;
+    }
+
+    /*
+     * カメラ映像を再開
+     */
+
+    stream.getVideoTracks().forEach(track => {
+      track.enabled = true;
+    });
+
+    frozenImage.style.display = "none";
+    camera.style.display = "block";
+
+    status.textContent = "カメラ映像";
+
+    pauseButton.style.display = "block";
+    resumeButton.style.display = "none";
+
+    isPaused = false;
+  }
+
+
+  // =========================
+  // ボタン
+  // =========================
+
+  startButton.addEventListener("click", startCamera);
+
+  pauseButton.addEventListener("click", pauseCamera);
+
+  resumeButton.addEventListener("click", resumeCamera);
+
+
+  // =========================
+  // ページを離れたらカメラ停止
+  // =========================
+
+  window.addEventListener("pagehide", () => {
+
+    if (stream) {
+
+      stream.getTracks().forEach(track => {
+        track.stop();
+      });
+
+      stream = null;
+    }
+  });
+
+</script>
+
+</body>
+</html>
